@@ -1,0 +1,114 @@
+// SDK 1.5.2
+// Structure sizes and contents may differ by SDK version
+// Compare with esp8266_wifi_raw/user/header.h
+// from esp8266_wifi_raw project
+
+/* Types */
+
+// Control block for esf_buf module
+struct esf_buf_ctl {
+    // +0
+    struct esf_buf *next_free_buf_of_type_1_or_2; // alloced as 1 by ieee80211_output_pbuf
+    // +4
+    struct esf_buf *next_free_buf_of_type_4;
+    // +8
+    struct esf_buf *next_free_buf_of_type_5; // alloced by ieee80211_getmgtframe
+    // +0x0c
+    struct esf_buf *next_free_buf_of_type_7;
+    // +0x10
+    struct esf_buf *next_free_buf_of_type_8; // used for RX buffers
+    // +0x14
+    // This field is decremented by esf_rx_buf_alloc, but initialized to 0
+    // and never incremented. So, it's negated number of allocated rx bufs.
+    u32 alloc_cnt_rx_bufs_of_type_8;
+};
+
+//
+// esf_buf extensions, different for different buf types
+//
+
+// from esp8266_wifi_raw project
+struct esf_buf_sub1 {
+    uint8 data[24]; //28
+    /* byte 10 increases by 8 for a 1 byte increase in the length. */
+    /* bytes 16 to 19 appear to be a timestamp in microseconds */
+};
+
+struct esf_buf_sub8 {
+    uint8 data[12];
+};
+
+// from esp8266_wifi_raw project
+struct esf_buf {
+    struct pbuf *pb1;                       /*  0 */
+    struct pbuf *pb2;                       /*  4 */
+    struct pbuf *pb3;                       /*  8 */
+    uint16 cnt1;                            /* 12 */
+    uint8 flg;                              /* 14 */
+    uint8 pad1[1];
+    struct ieee80211_frame *e_data;         /* 16 */
+    uint16 len1;                            /* 20 */
+    uint16 len2;                            /* 22 */
+    uint8 pad2[4];
+    uint32 type1;                           /* 28 */
+    struct esf_buf *next;                   /* 32 */
+    // points to struct esf_buf_subN, depending on buf type
+    void *ext;                              /* 36 0x24 */
+};
+
+/* Data */
+
+// .bss + 0
+extern struct esf_buf_ctl esf_buf_ctl;
+
+// .bss + 0x20
+// sz:0x500
+
+// type 6 is handled by vPortFree
+// type 3 is unhandled by esf_buf_recycle
+
+// init with: esf_buf_recycle(p, 1)
+extern struct { char ?[0x28]; }[5]; // sz:0xc8
+// init with: esf_buf_recycle(p, 4)
+extern struct { char ?[0x28]; }[8]; // sz:0x140
+// init with: esf_buf_recycle(p, 5)
+extern struct { char ?[0x28]; }[8]; // sz:0x140
+// init with: esf_buf_recycle(p, 7)
+extern struct { char ?[0x28]; }[4]; // sz:0xa0
+// init with: esf_buf_recycle(p, 8)
+extern struct { char ?[0x28]; }[7]; // sz:0x118
+
+// .bss + 0x520
+// sz:0x860
+extern struct { char ?[0x10c]; }[8]; // sz:0x860
+
+// .bss + 0xd80
+// sz:0x260
+
+extern struct { char ?[0x4c]}[8]; // sz:0x260
+
+// .bss + 0xfe0
+// sz:0x2c0
+
+extern struct { char ?[0x1c]; }[5]; // sz:0x8c
+extern struct { char ?[0x1c]; }[8]; // sz:0xe0
+extern struct { char ?[0x1c]; }[8]; // sz:0xe0
+extern struct { char ?[0x1c]; }[4]; // sz:0x70
+
+// .bss + 0x12a0
+// sz:0x54
+
+extern struct { char ?[0x0c]; }[7]; // sz:0x54
+
+// .bss + 0x12f4 - end of .bss
+
+/* Functions */
+
+//.irom0.text:
+struct esf_buf *esf_buf_alloc(u32, u32 buf_type);
+void esf_buf_recycle(struct esf_buf *buf, u32 buf_type);
+void esf_buf_setup(void);
+
+//.text:
+// This lives in iRAM as apparently called from interrupts
+FAST_CODE struct esf_buf *esf_rx_buf_alloc(u32 buf_type/*must be 8*/);
