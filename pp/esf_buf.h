@@ -27,11 +27,34 @@ struct esf_buf_ctl {
 // esf_buf extensions, different for different buf types
 //
 
-// from esp8266_wifi_raw project
 struct esf_buf_sub1 {
-    uint8 data[24]; //28
+    // Size was 24, 28 for older SDKs
+    uint8 data[32];
+    // from esp8266_wifi_raw project, for much older SDK:
     /* byte 10 increases by 8 for a 1 byte increase in the length. */
     /* bytes 16 to 19 appear to be a timestamp in microseconds */
+};
+
+struct esf_buf_sub2 {
+    uint8 data[32];
+};
+
+// Alloced from OS heap
+struct esf_buf_sub4 {
+    uint8 data[?];
+};
+
+struct esf_buf_sub5 {
+    uint8 data[32];
+};
+
+// Alloced from OS heap
+struct esf_buf_sub6 {
+    uint8 data[?];
+};
+
+struct esf_buf_sub7 {
+    uint8 data[32];
 };
 
 struct esf_buf_sub8 {
