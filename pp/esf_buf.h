@@ -130,7 +130,8 @@ extern struct { char ?[0x0c]; }[7]; // sz:0x54
 /* Functions */
 
 //.irom0.text:
-struct esf_buf *esf_buf_alloc(u32, u32 buf_type);
+// pbuf is NULL for buf_type=5 and non-NULL for buf_type=1
+struct esf_buf *esf_buf_alloc(struct pbuf *pbuf, u32 buf_type);
 void esf_buf_recycle(struct esf_buf *buf, u32 buf_type);
 void esf_buf_setup(void);
 
