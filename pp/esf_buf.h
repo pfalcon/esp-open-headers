@@ -41,7 +41,7 @@ struct esf_buf_sub2 {
 
 // Alloced from OS heap
 struct esf_buf_sub4 {
-    uint8 data[?];
+    uint8 data[32];
 };
 
 struct esf_buf_sub5 {
@@ -50,7 +50,7 @@ struct esf_buf_sub5 {
 
 // Alloced from OS heap
 struct esf_buf_sub6 {
-    uint8 data[?];
+    uint8 data[32];
 };
 
 struct esf_buf_sub7 {
@@ -78,6 +78,8 @@ struct esf_buf {
     // points to struct esf_buf_subN, depending on buf type
     void *ext;                              /* 36 0x24 */
 };
+
+_Static_assert(sizeof(struct esf_buf) == 0x28, "struct esf_buf: wrong size");
 
 /* Data */
 
