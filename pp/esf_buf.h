@@ -67,12 +67,12 @@ struct esf_buf_sub8 {
 // from esp8266_wifi_raw project
 struct esf_buf {
     struct pbuf *pb1;                       /*  0 */
-    struct pbuf *pb2;                       /*  4 */
-    struct pbuf *pb3;                       /*  8 */
-    uint16 cnt1;                            /* 12 */
+    struct pbuf *pb2;                       /*  4 */ // = malloc(0xc) // type 4,
+    struct pbuf *pb3;                       /*  8 */ // same ptr as above
+    uint16 cnt1;                            /* 12 */ // init: 1 // type 4
     uint8 flg;                              /* 14 */
     uint8 pad1[1];
-    struct ieee80211_frame *e_data;         /* 16 */
+    struct ieee80211_frame *e_data;         /* 16 */ // = malloc(3rd arg to esf_buf_alloc) // type 4
     uint16 len1;                            /* 20 */
     uint16 len2;                            /* 22 */
     uint8 pad2[4];
@@ -96,15 +96,19 @@ extern struct esf_buf_ctl esf_buf_ctl;
 // type 3 is unhandled by esf_buf_recycle
 
 // init with: esf_buf_recycle(p, 1)
-extern struct { char ?[0x28]; }[5]; // sz:0xc8
+extern struct esf_buf[8/*was in prev SDK: 5*/]; // sz:0x140 // unk_3ffeae40
+
 // init with: esf_buf_recycle(p, 4)
-extern struct { char ?[0x28]; }[8]; // sz:0x140
+// not in SDK 1.5.2 extern struct { char ?[0x28]; }[8]; // sz:0x140
+
 // init with: esf_buf_recycle(p, 5)
-extern struct { char ?[0x28]; }[8]; // sz:0x140
+extern struct esf_buf[8]; // sz:0x140
+
 // init with: esf_buf_recycle(p, 7)
-extern struct { char ?[0x28]; }[4]; // sz:0xa0
+extern struct esf_buf[4]; // sz:0xa0
+
 // init with: esf_buf_recycle(p, 8)
-extern struct { char ?[0x28]; }[7]; // sz:0x118
+extern struct esf_buf[7]; // sz:0x118
 
 // .bss + 0x520
 // sz:0x860
