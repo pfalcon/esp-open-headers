@@ -10,7 +10,7 @@ struct esf_buf_ctl {
     // +0
     struct esf_buf *next_free_buf_of_type_1_or_2; // alloced as 1 by ieee80211_output_pbuf
     // +4
-    struct esf_buf *next_free_buf_of_type_4;
+    struct esf_buf *next_free_buf_of_type_4; // alloced by ieee80211_getmgtframe
     // +8
     struct esf_buf *next_free_buf_of_type_5; // alloced by ieee80211_getmgtframe
     // +0x0c
@@ -39,15 +39,18 @@ struct esf_buf_sub2 {
     uint8 data[32];
 };
 
+// alloced by ieee80211_getmgtframe
 // Alloced from OS heap
 struct esf_buf_sub4 {
     uint8 data[32];
 };
 
+// alloced by ieee80211_getmgtframe
 struct esf_buf_sub5 {
     uint8 data[32];
 };
 
+// alloced by ieee80211_getmgtframe
 // Alloced from OS heap
 struct esf_buf_sub6 {
     uint8 data[32];
